@@ -1,7 +1,6 @@
 import string
 
-import server
-import poller
+from synergistic import poller, server
 import indexer
 
 
@@ -12,6 +11,7 @@ template = string.Template(text)
 html = template.safe_substitute({'site_name': 'Search'})
 
 index = indexer.Indexer()
+
 
 class Handler(server.http.Handler):
 
