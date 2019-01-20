@@ -1,65 +1,70 @@
+import os
 import string
+import html
 
-from synergistic import poller, server
-import indexer
-
+from synergistic import poller, broker
 
 with open("./templates/search.html", 'r') as file:
     text = file.read()
 
 template = string.Template(text)
-html = template.safe_substitute({'site_name': 'Search'})
+html_data = template.safe_substitute({'site_name': 'Search'})
 
-index = indexer.Indexer()
+broker_client = broker.client.Client("127.0.0.1", 8891, broker.Type.APPLICATION)
 
 
-class Handler(server.http.Handler):
+def handle_request(channel, msg_id, payload):
+    endpoint = '.' + payload['endpoint']
+    if endpoint.startswith('./static/'):
+        if not os.path.abspath(endpoint).startswith(os.getcwd()):
+            broker_client.respond(msg_id, {'code': 403})
+            return
 
-    def handle_message(self, message):
-        message = message.decode('utf-8')
-        method, endpoint, headers, body = self.parse(message)
-        print(method, endpoint, body)
+        if not os.path.isfile(endpoint):
+            broker_client.respond(msg_id, {'code': 404})
+            return
 
-        if endpoint.startswith('/static'):
-            with open("." + endpoint, 'r') as file:
-                data = file.read()
-            self.respond(message=data, headers={'Content-Type': 'text/css; charset=UTF-8'})
-        elif 'search' in body:
-            data = index.search(body['search'])
+        data = {'headers': {'Content-Type': 'text/css; charset=UTF-8'}}
+        with open(endpoint, 'r') as file:
+            data['body'] = file.read()
+        broker_client.respond(msg_id, data)
 
-            with open("./templates/results.html", 'r') as file:
-                text = file.read()
+    elif 'search' in payload['body']:
+        data = {'query': payload['body']['search'], 'msg_id': msg_id}
+        broker_client.publish('search', data, return_results)
 
-            template = string.Template(text)
+    elif 'crawl' in payload['body']:
+        url = payload['body']['crawl']
+        url = html.unescape(url)
+        url = url.replace('%2F', '/').replace('%3A', ':')
+        url = url.replace('https://', '')
+        broker_client.publish('crawl', {'url': url})
+        broker_client.respond(msg_id, {'body': html_data})
 
-            links = []
-            for link in data:
-                links.append('<a href="http://' + link + '">' + link + '</a>')
+    else:
+        broker_client.respond(msg_id, {'body': html_data})
 
-            results_html = template.safe_substitute({'site_name': 'Search', 'search': body['search'], 'results': '<p></p>'.join(links)})
 
-            self.respond(message=results_html)
-        else:
-            self.respond(message=html)
-        self.close()
+def return_results(channel, msg_id, payload):
+    with open("./templates/results.html", 'r') as file:
+        text = file.read()
+
+    template = string.Template(text)
+    data = payload['results']
+
+    links = []
+    for link in data:
+        links.append('<a href="http://' + link + '">' + link + '</a>')
+
+    results_html = template.safe_substitute(
+        {'site_name': 'Search', 'search': payload['query'], 'results': '<p></p>'.join(links)})
+    broker_client.respond(payload['msg_id'], {'body': results_html})
 
 
 if __name__ == "__main__":
     poller = poller.Poll(catch_errors=False)
 
-    http_server = server.http.Server(handler=Handler)
-
-    index.index("example.com", "example web site test")
-    index.index("stallman.org", "Richard Stallman's web site")
-    index.index("wikipedia.com", "wiki wikipedia site")
-    index.index("youtube.com", "youtube video site")
-    index.index("google.com", "search engine")
-    index.index("google.co.uk", "search engine uk")
-    index.index("twitter.com", "twitter social network")
-    index.index("brookes.ac.uk", "brookes")
-    index.index("moodle.brookes.ac.uk", "brookes moodle")
-    index.index("brookes.ac.uk/students/careers/", "brookes careers")
-
-    poller.add_server(http_server)
+    poller.add_client(broker_client)
+    broker_client.subscribe('request.*', handle_request)
 
     poller.serve_forever()
