@@ -1,18 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel= "stylesheet" type= "text/css" href="/static/front.css" />
-    <meta charset="UTF-8">
-    <title>${site_name}</title>
-</head>
-<body>
-    <h1>${site_name}</h1>
-    <form action="/search">
-      <input type="text" name="search" placeholder="${search}">
-    </form>
-    <p>${results}</p>
-    <p>.</p>
-    <p>.</p>
-    <a href="/">back</a>
-</body>
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Nescio</title>
+		  <link rel="stylesheet" href="css/skel-noscript.css" />
+          <link rel="stylesheet" href="css/style.css" />
+          <link rel="stylesheet" href="css/style-desktop.css" />
+	</head>
+	<body>
+
+	<!-- Header -->
+		<div id="header">
+			<div id="nav-wrapper"> 
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a href="results.html">Homepage</a></li>
+						<li class="active"><a href="settings.html">Settings</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div class="container"> 
+				
+				<!-- Logo -->
+				<div id="logo">
+					<h1><a href="#">Nescio</a></h1>
+                    <div class="search-container">
+                        <form action="/search">
+                        <input type="text" placeholder="Search.." name="search">
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                        </form>
+                    </div>
+				</div>
+			</div>
+		</div>
+	<!-- Header --> 
+        
+	<!-- Main -->
+		<div id="main">
+			<div class="results">
+                <p class="result">${result}</p>
+                <p class="stats">${stats}</p>
+			</div>
+		</div>
+	<!-- /Main -->
+        
+
+	<!-- Footer -->
+		<div id="footer">
+			<div class="container">
+				<section>
+					<header>
+						<h2>Get in touch</h2>
+					</header>
+					<ul class="contact">
+						<li><a href="#" class="fa fa-twitter"><span>Twitter</span></a></li>
+						<li class="active"><a href="#" class="fa fa-facebook"><span>Facebook</span></a></li>
+						<li><a href="#" class="fa fa-globe"><span>Brookes</span></a></li>
+					</ul>
+				</section>
+			</div>
+		</div>
+	<!-- /Footer -->
+
+	</body>
 </html>
