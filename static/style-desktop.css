@@ -1,0 +1,98 @@
+	body
+	{
+	}
+
+	body,input,textarea,select
+	{
+	}
+
+	header
+	{
+		margin-bottom: 1.6em;
+	}
+	
+		header h2
+		{
+			font-size: 3.4em;
+		}
+
+		header .byline
+		{
+			font-size: 1.7em;
+		}
+
+	#header
+	{
+		padding: 10em 0 6em 0;
+	}
+
+	.homepage #header
+	{
+		padding: 16em 0 12em 0;
+	}
+
+     .search-container {
+            padding-left: 20px;
+            left: 500px;
+        }
+    
+    .search-container input {
+    height: 30px;
+    width: 500px;
+    }
+
+	#main
+	{
+		padding: 6em 0em;
+	}
+	
+	.homepage #content header h2
+	{
+		padding: 0.70em 0em;
+		font-size: 2.2em;
+	}
+
+	#sidebar h2
+	{
+		font-size: 2.4em;
+	}
+
+	#footer
+	{
+		padding: 6em 0em;
+	}
+	
+	#featured
+	{
+		padding: 6em 0em;
+	}
+	
+	#featured h3
+	{
+		padding: 1.5em 0em;
+		font-size: 1.6em;
+	}
+
+	#featured header
+	{
+		margin-bottom: 3em;
+	}
+	
+	#featured p
+	{
+		line-height: 2em;
+		font-size: 1.2em;
+	}
+	
+	#tweet
+	{
+		padding: 6em 0em;
+	}
+
+	#tweet blockquote
+	{
+		margin: 0;
+		padding: 1em 4em;
+		line-height: 1.5em;
+		font-size: 1.8em;
+	}	
